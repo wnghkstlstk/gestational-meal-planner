@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#183b78">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="임당 식단표">
+<title>임신성 당뇨 식단 플래너 | 1800 kcal</title>
+<style>
+:root{--ink:#202b3c;--muted:#637083;--line:#dfe6ef;--bg:#f4f7fb;--card:#fff;--blue:#315fc4;--blue2:#eaf0ff;--green:#187a5b;--amber:#9b6200;--red:#b23b3b;--shadow:0 8px 24px rgba(31,49,79,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",Arial,sans-serif;line-height:1.5}
+header{background:linear-gradient(120deg,#183b78,#3973cf);color:white;padding:28px max(20px,calc((100vw - 1280px)/2));}
+header h1{margin:0 0 7px;font-size:clamp(23px,3vw,34px)}header p{margin:0;color:#e5edff;max-width:900px}
+main{max-width:1280px;margin:22px auto;padding:0 18px 48px;padding-bottom:calc(48px + env(safe-area-inset-bottom))}.notice{border:1px solid #f0d9a5;background:#fff8e8;padding:14px 16px;border-radius:12px;margin-bottom:18px;font-size:14px}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(310px,.85fr);gap:18px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);margin-bottom:18px}
+h2{font-size:19px;margin:0 0 14px}h3{font-size:16px;margin:0 0 10px}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.toolbar label{font-size:13px;color:var(--muted)}
+button,select,input{font:inherit}button{border:1px solid var(--line);border-radius:9px;padding:9px 12px;background:white;color:var(--ink);cursor:pointer}button:hover{border-color:var(--blue);background:#f6f8ff}
+button.primary{background:var(--blue);border-color:var(--blue);color:white}button.danger{color:var(--red)}select,input{border:1px solid #cfd8e5;border-radius:8px;padding:8px;background:white;color:var(--ink);max-width:100%}
+.meal{border:1px solid var(--line);border-radius:12px;margin:12px 0;overflow:hidden}.meal-head{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#f7f9fc;padding:11px 13px}.meal-head strong{font-size:15px}.meal-body{padding:10px 12px}
+.foodrow{display:grid;grid-template-columns:minmax(0,1.4fr) 72px 82px auto;gap:8px;align-items:start;padding:10px 0;border-bottom:1px solid #edf0f5}.foodrow:last-child{border-bottom:0}.foodname{font-weight:650}.foodmeta{font-size:12px;color:var(--muted);margin-top:3px}.foodrow .qty{width:72px}.foodrow .unit{font-size:12px;color:var(--muted);padding-top:8px}.foodrow .remove{padding:5px 9px}
+.empty{color:var(--muted);font-size:13px;padding:8px 0}.addline{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.addline select{flex:1;min-width:180px}
+.summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.metric{border:1px solid var(--line);border-radius:11px;padding:11px}.metric .label{font-size:12px;color:var(--muted)}.metric .value{font-size:20px;font-weight:750;margin:2px 0}.metric .sub{font-size:12px;color:var(--muted)}
+.progress{height:7px;background:#edf1f7;border-radius:20px;overflow:hidden;margin-top:8px}.progress span{display:block;height:100%;background:var(--blue);width:0;transition:width .2s}
+.status{font-size:12px;margin-top:5px}.status.ok{color:var(--green)}.status.over{color:var(--red)}.status.under{color:var(--amber)}
+.target-table{width:100%;border-collapse:collapse;font-size:13px}.target-table th,.target-table td{padding:9px 7px;border-bottom:1px solid #edf0f5;text-align:left}.target-table th{color:var(--muted);font-weight:600}.target-table input{width:60px;padding:5px}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}.tabs button.active{background:var(--blue2);border-color:#b9caff;color:#204da9;font-weight:700}
+.search{width:100%;margin:7px 0 12px}.catalog{display:grid;gap:8px;max-height:420px;overflow:auto}.foodcard{border:1px solid var(--line);border-radius:10px;padding:11px}.foodcard-head{display:flex;justify-content:space-between;gap:8px;align-items:start}.foodcard p{font-size:13px;color:var(--muted);margin:7px 0}.tag{display:inline-block;font-size:11px;background:#eef2f8;color:#46566d;padding:3px 7px;border-radius:20px;margin:2px 3px 2px 0}
+.exchange-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}.exchange-table th,.exchange-table td{padding:8px 6px;border-bottom:1px solid #edf0f5;text-align:left;vertical-align:top}.exchange-table th{color:var(--muted);font-weight:650}.exchange-table .nowrap{white-space:nowrap}.source-badge{display:inline-block;font-size:10px;background:#e6f5ec;color:#176345;padding:2px 6px;border-radius:12px;margin-left:4px}.approx-badge{display:inline-block;font-size:10px;background:#fff3dc;color:#835400;padding:2px 6px;border-radius:12px;margin-left:4px}.quantity-line{font-size:12px;color:#234b9c;margin-top:3px;font-weight:600}
+.detail{background:#f8faff;border:1px solid #dbe5fb;border-radius:12px;padding:13px;margin-top:12px}.detail p{font-size:13px;margin:7px 0}.detail strong{color:#234b9c}
+.source-list{font-size:13px;padding-left:19px}.source-list li{margin:7px 0}.source-list a{color:#2457b7}
+.small{font-size:12px;color:var(--muted)}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}.footer{font-size:12px;color:var(--muted);text-align:center;padding:10px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.foodrow{grid-template-columns:minmax(0,1fr) 66px 76px auto}.card{padding:15px}}
+@media(max-width:480px){header{padding:22px 16px}main{padding:0 10px calc(30px + env(safe-area-inset-bottom))}.foodrow{grid-template-columns:minmax(0,1fr) 60px auto;gap:6px}.foodrow .unit{display:none}.foodrow .remove{grid-column:3}.summary-grid{grid-template-columns:1fr 1fr}.two-col{grid-template-columns:1fr}}
+@media print{body{background:white}.no-print,button{display:none!important}.layout{display:block}.card{box-shadow:none;break-inside:avoid}.catalog-panel,.sources-panel{display:none}.meal{break-inside:avoid}header{background:white;color:#111;padding:10px 0}header p{color:#333}main{max-width:none;margin:0;padding:0}.notice{background:white}}
+</style>
+</head>
+<body>
+<header>
+  <h1>임신성 당뇨 식단 플래너</h1>
+  <p>1,800 kcal 기준 · 식품군 교환단위로 식단을 구성하고, 각 재료의 선택 이유와 참고량을 확인하는 개인용 도구</p>
+</header>
+<main>
+  <div class="notice"><strong>사용 전 확인</strong><br>
+    이 도구는 사진의 ‘임신성 당뇨병 1,800 kcal’ 행(곡류 7, 저지방 어육류 2, 중지방 어육류 4, 채소 8, 지방 4, 우유 2, 과일 2)을 기본값으로 사용합니다.
+    식품별 중량은 일반적인 식품교환 예시이며 제품·조리법·기관별 교환표에 따라 달라질 수 있습니다. 담당 의료진/임상영양사가 정한 처방과 혈당 기록을 우선하세요.
+  </div>
+  <div class="layout">
+    <section>
+      <div class="card">
+        <div class="toolbar" style="justify-content:space-between">
+          <h2 style="margin:0">오늘의 식단표</h2>
+          <div class="toolbar no-print">
+            <button id="sampleBtn">예시 식단 불러오기</button>
+            <button id="clearBtn" class="danger">초기화</button>
+            <button id="printBtn" class="primary">인쇄 / PDF 저장</button>
+          </div>
+        </div>
+        <p class="small">음식을 추가한 뒤 수량(교환단위)을 조정하세요. 재료명을 누르면 상세 설명과 식단 근거를 확인할 수 있습니다. <span id="saveStatus" aria-live="polite">자동 저장 준비 중…</span></p>
+        <div id="meals"></div>
+      </div>
+      <div class="card">
+        <h2>하루 섭취량 요약</h2>
+        <div id="summary" class="summary-grid"></div>
+        <p class="small" style="margin-top:12px">교환단위 합계는 식품군별 분량을 관리하기 위한 참고 지표입니다. 열량·탄수화물·혈당 반응을 완전히 대체하지 않습니다.</p>
+      </div>
+    </section>
+    <aside>
+      <div class="card">
+        <h2>하루 목표 교환단위</h2>
+        <p class="small">기본값은 제공해 주신 이미지의 임신성 당뇨 1,800 kcal 행입니다. 의료진이 다른 목표를 제시했다면 숫자를 수정하세요.</p>
+        <table class="target-table">
+          <thead><tr><th>식품군</th><th>목표</th><th>현재</th></tr></thead>
+          <tbody id="targets"></tbody>
+        </table>
+      </div>
+      <div class="card exchange-panel">
+        <h2>사진 기준 1교환단위 영양 기준</h2>
+        <p class="small">사용자께서 제공한 사진에서 읽을 수 있는 식품군별 기준입니다. 사진에 없는 우유군·과일군·지방군의 영양 기준은 임의로 채우지 않았습니다.</p>
+        <div id="exchangeGuide"></div>
+      </div>
+      <div class="card catalog-panel">
+        <h2>식품 정보창</h2>
+        <div class="tabs" id="tabs"></div>
+        <input id="search" class="search" placeholder="식품명 검색 (예: 현미밥, 달걀, 우유)">
+        <div id="catalog" class="catalog"></div>
+        <div id="foodDetail" class="detail"><strong>식품을 선택해 주세요.</strong><p>식품별 기준량, 교환단위, 탄수화물 관리 관점의 설명과 조리 시 유의점을 확인할 수 있습니다.</p></div>
+      </div>
+      <div class="card sources-panel">
+        <h2>식단 구성의 근거</h2>
+        <ul class="source-list">
+          <li><strong>탄수화물의 양과 질을 함께 관리</strong>: 정제·가당 식품을 줄이고 통곡물, 채소, 과일 등 영양밀도가 높은 식품을 선택합니다.</li>
+          <li><strong>탄수화물을 끼니에 분배</strong>: 한 번에 몰아 먹기보다 식사와 간식에 나누고, 개인 혈당 측정 결과에 따라 조정합니다.</li>
+          <li><strong>임신 중 영양 충족</strong>: 과도한 탄수화물 제한이나 특정 식품군의 배제는 피하고, 적절한 열량·단백질·지방·식이섬유를 확보합니다.</li>
+          <li><strong>개인별 식단</strong>: 1,800 kcal는 모든 임신부에게 일률적으로 맞는 처방이 아닙니다. 체중 변화, 임신 주수, 활동량, 혈당 및 의료진 지시에 따라 달라집니다.</li>
+        </ul>
+        <p class="small">참고 문헌(가이드라인):</p>
+        <ul class="source-list">
+          <li><a href="https://diabetesjournals.org/care/article/49/Supplement_1/S321/163918/15-Management-of-Diabetes-in-Pregnancy-Standards" target="_blank" rel="noopener">American Diabetes Association, Standards of Care in Diabetes—2026, Diabetes in Pregnancy</a></li>
+          <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12270580/" target="_blank" rel="noopener">대한당뇨병학회, 2025 당뇨병 진료지침(영양요법·임신 중 관리)</a></li>
+        </ul>
+        <p class="small">이 가이드라인은 식사 구성의 원칙을 뒷받침합니다. 개별 식품의 정확한 교환량은 해당 병원/영양사의 식품교환표를 확인하세요.</p>
+      </div>
+    </aside>
+  </div>
+  <div class="footer">개인 식단 계획 보조용 · 진단·치료 또는 영양사 상담을 대체하지 않습니다.</div>
+</main>
+
+<dialog id="quickMeal" style="border:1px solid #dfe6ef;border-radius:16px;padding:20px;max-width:calc(100vw - 32px);width:420px;box-shadow:0 18px 50px rgba(0,0,0,.2)">
+  <form method="dialog">
+    <h2 style="margin-top:0">식사 선택</h2>
+    <p id="quickMealFood" class="small">선택한 식품을 어느 식사에 추가할까요?</p>
+    <label for="quickMealSelect">추가할 식사</label><br>
+    <select id="quickMealSelect" style="width:100%;margin:8px 0 16px">
+      <option value="breakfast">아침</option><option value="snack1">오전 간식</option><option value="lunch">점심</option><option value="snack2">오후 간식</option><option value="dinner">저녁</option><option value="snack3">취침 전 간식</option>
+    </select>
+    <div class="toolbar" style="justify-content:flex-end"><button value="cancel">취소</button><button id="quickMealConfirm" value="default" class="primary">추가하기</button></div>
+  </form>
+</dialog>
+
+<script>
+const groups = [
+ {id:"grain",name:"곡류군",target:7,color:"#4775c7"},
+ {id:"lean",name:"어육류(저지방)",target:2,color:"#39977c"},
+ {id:"medium",name:"어육류(중지방)",target:4,color:"#b78336"},
+ {id:"highfat",name:"어육류(고지방) - 기본 목표 미설정",target:0,color:"#8e6ca8"},
+ {id:"veg",name:"채소군",target:8,color:"#4c9a55"},
+ {id:"fat",name:"지방군",target:4,color:"#b47b36"},
+ {id:"milk",name:"우유군",target:2,color:"#7a69b5"},
+ {id:"fruit",name:"과일군",target:2,color:"#d16a78"}
+];
+const foods = [
+{id:"rice",name:"밥(백미/잡곡밥)",group:"grain",serving:"조리한 밥 약 70 g",unit:1,carb:"탄수화물의 주요 공급원",desc:"밥은 곡류군 교환단위로 계산합니다. 백미·현미·잡곡밥은 탄수화물 양이 비슷한 분량으로 맞추는 것이 핵심이며, 잡곡을 섞었다고 밥 양을 무제한 늘릴 수 있는 것은 아닙니다.",why:"정해진 탄수화물 분량을 한 끼에 몰리지 않게 배분하기 좋습니다. 실제 혈당 반응은 밥의 종류, 익힘 정도, 함께 먹는 반찬과 개인차에 따라 달라집니다.",tip:"밥은 조리 후 무게로 계량하세요. 반찬에 들어간 감자·고구마·떡·전분도 별도 곡류군으로 셉니다."},
+{id:"bread",name:"식빵",group:"grain",serving:"약 35 g (제품별 확인)",unit:1,carb:"탄수화물 공급원",desc:"식빵은 간편하게 분량을 정할 수 있는 곡류군입니다. 통밀·통곡물 제품은 식이섬유가 더 많을 수 있지만 제품의 탄수화물 표시를 확인해야 합니다.",why:"간식이나 아침 식사에서 탄수화물 분량을 일정하게 맞추는 데 활용할 수 있습니다.",tip:"잼·꿀·가당 스프레드는 추가 당류를 더하므로 양을 확인하세요."},
+{id:"oats",name:"오트밀(마른 상태)",group:"grain",serving:"약 30 g (제품별 확인)",unit:1,carb:"탄수화물·식이섬유",desc:"귀리 기반 식품입니다. 제품에 따라 압착귀리, 인스턴트 제품, 첨가당 함량이 다릅니다.",why:"통곡물 선택지를 늘리고 식이섬유를 보충하는 데 도움이 될 수 있습니다. 다만 곡류군 분량은 그대로 계산합니다.",tip:"무가당 제품을 선택하고 우유·과일을 넣으면 해당 식품군도 함께 계산하세요."},
+{id:"potato",name:"감자",group:"grain",serving:"약 140 g (조리법에 따라 차이)",unit:1,carb:"전분성 탄수화물",desc:"감자는 채소 반찬처럼 보이지만 식단 교환에서는 전분성 식품으로 곡류군에 포함해 계산하는 경우가 일반적입니다.",why:"밥 대신 탄수화물 공급원으로 교체할 수 있어 식단의 다양성을 높입니다.",tip:"감자를 밥과 함께 먹으면 두 식품의 탄수화물 분량을 모두 합산하세요."},
+{id:"sweetpotato",name:"고구마",group:"grain",serving:"약 70 g (품종·조리 후 수분에 따라 차이)",unit:1,carb:"전분·당류",desc:"고구마는 식이섬유를 포함하지만 탄수화물 식품입니다. 단맛이 난다는 이유만으로 금지할 필요는 없고 분량이 중요합니다.",why:"밥이나 빵 일부를 대체하는 탄수화물 선택지입니다.",tip:"군고구마와 찐고구마는 수분·당도·중량이 달라질 수 있으므로 병원 교환표와 제품/조리 상태를 기준으로 계량하세요."},
+{id:"chicken",name:"닭가슴살(껍질 제거)",group:"lean",serving:"약 40 g",unit:1,carb:"단백질 중심",desc:"껍질을 제거한 닭가슴살은 비교적 지방이 적은 단백질 식품입니다.",why:"탄수화물 위주의 식사에 단백질 반찬을 더해 식사의 영양 균형을 맞춥니다. 단백질 반찬이 혈당 상승을 없애는 것은 아닙니다.",tip:"튀김옷·달콤한 양념·소스는 탄수화물과 지방을 추가할 수 있습니다."},
+{id:"whitefish",name:"흰살생선(대구·명태 등)",group:"lean",serving:"약 50 g",unit:1,carb:"단백질 중심",desc:"대구·명태·가자미 등은 일반적으로 지방이 적은 생선 선택지입니다. 생선 종류와 부위에 따라 분류가 달라질 수 있습니다.",why:"단백질을 공급하면서 포화지방이 많은 육류에 치우치지 않도록 식단을 다양화합니다.",tip:"튀김보다 찜·구이·조림을 활용하고, 조림 양념의 설탕·물엿을 확인하세요."},
+{id:"shrimp",name:"새우",group:"lean",serving:"약 50 g",unit:1,carb:"단백질 중심",desc:"새우는 단백질을 공급하는 해산물입니다. 가공 새우나 튀김 제품은 첨가물과 조리유가 다를 수 있습니다.",why:"육류 외 단백질 공급원을 다양하게 선택할 수 있습니다.",tip:"알레르기가 있거나 의료진의 별도 식품 제한이 있다면 해당 지침을 따르세요."},
+{id:"egg",name:"달걀",group:"medium",serving:"중간 크기 약 1개",unit:1,carb:"단백질·지방",desc:"달걀은 단백질과 지방을 함께 제공하며, 사진의 교환표에서는 중지방 어육류군의 예시로 다룹니다.",why:"식사에 단백질을 보태고 조리·준비가 간편합니다. 식품군 분류는 사용 중인 병원 교환표를 우선하세요.",tip:"삶기·찜 등 기름을 많이 추가하지 않는 조리법을 활용할 수 있습니다."},
+{id:"tofu",name:"두부",group:"medium",serving:"약 80 g 전후 (제품별 확인)",unit:1,carb:"식물성 단백질·지방",desc:"두부는 단백질을 공급하는 콩 식품입니다. 단단한 정도와 제품별 수분·지방 함량이 달라 교환량은 기준표에 따라 확인해야 합니다.",why:"동물성 단백질 외에 식물성 단백질을 선택할 수 있습니다.",tip:"부침용 기름은 지방군에 별도 포함하고, 양념장의 당류도 확인하세요."},
+{id:"salmon",name:"연어",group:"medium",serving:"약 40–50 g (표 기준 확인)",unit:1,carb:"단백질·불포화지방",desc:"연어는 단백질과 지방을 함께 제공하며 오메가-3 지방산 공급원이 될 수 있습니다.",why:"생선류를 다양하게 포함하고 지방의 질을 고려한 식단 구성에 활용합니다.",tip:"임신 중에는 생선 종류별 수은 안내와 충분한 가열 등 임신부 식품안전 지침을 따르세요."},
+{id:"spinach",name:"시금치·잎채소",group:"veg",serving:"일반 채소 약 70 g 예시",unit:1,carb:"식이섬유·미량영양소",desc:"시금치, 상추, 양배추, 브로콜리 등 비전분성 채소는 식이섬유와 비타민·미네랄을 공급합니다.",why:"식사의 부피와 식이섬유를 늘리고, 곡류·단백질 식품과 균형 잡힌 식사를 구성하는 데 유용합니다.",tip:"나물·볶음에 넣은 참기름이나 식용유는 지방군으로 따로 계산합니다."},
+{id:"broccoli",name:"브로콜리",group:"veg",serving:"일반 채소 약 70 g 예시",unit:1,carb:"식이섬유·미량영양소",desc:"브로콜리는 비전분성 채소이며 식이섬유와 비타민을 제공합니다.",why:"채소 섭취량을 확보하고 식사의 다양성을 높입니다.",tip:"소스에 설탕이 들어가는지 확인하고, 조리유는 별도 계산하세요."},
+{id:"mushroom",name:"버섯",group:"veg",serving:"약 50–70 g 예시",unit:1,carb:"식이섬유·미량영양소",desc:"표고·느타리·새송이·팽이버섯 등은 반찬과 국에 활용하기 쉽습니다.",why:"채소 반찬의 종류를 늘리는 데 유용합니다.",tip:"버섯 자체보다 볶을 때 쓰는 기름·양념의 양이 식단 계산에 영향을 줄 수 있습니다."},
+{id:"cucumber",name:"오이·토마토 등 생채소",group:"veg",serving:"일반 채소 약 70 g 예시",unit:1,carb:"수분·식이섬유",desc:"오이, 토마토, 파프리카 등은 생으로 곁들이기 쉬운 채소입니다. 토마토 등은 사용 중인 교환표에서 분류와 양을 확인하세요.",why:"식사에 채소를 간편하게 추가하고 식품의 다양성을 높입니다.",tip:"드레싱·마요네즈·설탕이 든 소스는 별도로 계산하세요."},
+{id:"oil",name:"식용유·올리브유·참기름",group:"fat",serving:"1작은술 약 5 g",unit:1,carb:"지방",desc:"기름은 소량으로도 열량이 높습니다. 올리브유·참기름 등은 조리와 풍미에 사용할 수 있습니다.",why:"지방을 무조건 배제하지 않고 정해진 양 안에서 사용합니다. 불포화지방을 우선하는 식사 원칙과도 부합합니다.",tip:"팬에 두른 기름, 드레싱, 볶음·부침 기름을 모두 합산하세요."},
+{id:"almond",name:"아몬드·호두 등 견과류",group:"fat",serving:"교환표 기준량 확인",unit:1,carb:"지방·일부 단백질·식이섬유",desc:"견과류는 불포화지방과 일부 단백질·식이섬유를 제공합니다. 종류에 따라 지방과 열량이 달라집니다.",why:"간식이나 식사에 지방의 질을 고려한 선택지로 활용할 수 있습니다.",tip:"한 줌은 양이 커지기 쉬우므로 무염 제품을 정량 계량하세요. 정확한 교환량은 기관별 표를 확인하세요."},
+{id:"milk",name:"흰 우유",group:"milk",serving:"약 200 mL 예시",unit:1,carb:"유당·단백질·칼슘",desc:"우유에는 유당에 따른 탄수화물과 단백질·칼슘이 함께 들어 있습니다.",why:"임신 중 칼슘과 단백질을 보충하는 식품 선택지입니다. 우유도 탄수화물 섭취량에 포함해 분배합니다.",tip:"가당 우유·초코우유는 당류가 추가됩니다. 저지방 여부와 교환단위는 처방표를 따르세요."},
+{id:"yogurt",name:"무가당 플레인 요거트",group:"milk",serving:"제품 영양표·교환표 확인",unit:1,carb:"유당·단백질",desc:"플레인 요거트도 제품에 따라 탄수화물과 단백질 함량이 다릅니다. 그릭요거트는 농축 정도에 따라 영양성분이 달라집니다.",why:"유제품의 대안이 될 수 있으나 ‘무가당’ 표시와 실제 영양정보를 확인해야 합니다.",tip:"과일·그래놀라·꿀을 더하면 과일군 또는 곡류군·당류가 추가될 수 있습니다."},
+{id:"apple",name:"사과",group:"fruit",serving:"약 80 g 예시 (교환표 확인)",unit:1,carb:"과일 탄수화물·식이섬유",desc:"사과는 과일군으로 계산합니다. 과일은 비타민과 식이섬유를 제공하지만 탄수화물도 포함합니다.",why:"과일을 완전히 배제하기보다 정해진 분량으로 나누어 먹는 방식에 맞습니다.",tip:"주스보다 통과일을 선택하고, 한 번에 많은 양을 먹지 않도록 분량을 계량하세요."},
+{id:"mandarin",name:"귤",group:"fruit",serving:"약 120 g 예시 (크기 확인)",unit:1,carb:"과일 탄수화물",desc:"귤은 과일군입니다. 개수만으로는 크기 차이가 크므로 무게나 식품교환표 기준량을 활용하세요.",why:"식단에 과일을 포함하되 1회 분량을 관리하기 쉽습니다.",tip:"과일군 목표량을 하루에 나누어 먹고, 식후 혈당 기록에 따라 담당자와 조정하세요."},
+{id:"strawberry",name:"딸기",group:"fruit",serving:"약 150 g 예시 (교환표 확인)",unit:1,carb:"과일 탄수화물·식이섬유",desc:"딸기는 수분 함량이 높지만 과일군으로 계산해야 합니다.",why:"다양한 과일 선택지를 제공하며, 계량해 정해진 양을 먹는 데 활용할 수 있습니다.",tip:"연유·설탕·시럽을 곁들이면 추가 당류가 생깁니다."},
+{id:"brownrice",name:"현미밥",group:"grain",serving:"조리한 밥 약 70 g 예시",unit:1,carb:"전분·식이섬유",desc:"현미를 사용한 밥으로 백미밥과 마찬가지로 곡류군 분량을 계산합니다.",why:"통곡물 선택지를 늘릴 수 있지만 혈당 반응은 개인차가 있습니다.",tip:"백미밥과 함께 먹을 때 두 양을 합산하세요."},
+{id:"barleyrice",name:"보리밥",group:"grain",serving:"조리한 밥 약 70 g 예시",unit:1,carb:"전분·식이섬유",desc:"보리를 섞은 밥입니다. 실제 탄수화물량은 배합비에 따라 달라집니다.",why:"밥 종류를 다양하게 선택할 수 있습니다.",tip:"보리 비율이 높아도 밥 전체 분량을 계량하세요."},
+{id:"multigrainrice",name:"콩·잡곡밥",group:"grain",serving:"조리한 밥 약 70 g 예시",unit:1,carb:"전분·식이섬유·일부 단백질",desc:"콩과 여러 곡물을 섞은 밥으로 재료와 배합에 따라 영양성분이 달라집니다.",why:"식단의 다양성을 높이는 선택지입니다.",tip:"콩이 들어가도 밥 전체를 곡류군 기준으로 계산하는 편이 안전합니다."},
+{id:"ricecake",name:"가래떡·떡",group:"grain",serving:"제품별 탄수화물·교환표 확인",unit:1,carb:"전분 중심",desc:"떡은 적은 부피에 탄수화물이 농축될 수 있습니다.",why:"밥 대용으로 먹을 경우 분량 조절이 중요합니다.",tip:"떡 종류별 차이가 커서 고정 중량 대신 제품 표시와 병원 교환표를 확인하세요."},
+{id:"noodles",name:"삶은 국수·소면",group:"grain",serving:"삶은 중량 기준으로 교환표 확인",unit:1,carb:"전분 중심",desc:"국수는 조리 전후 수분 흡수량에 따라 중량이 크게 달라집니다.",why:"면 요리를 먹는 날에도 탄수화물 분량을 계획할 수 있습니다.",tip:"삶기 전·후 중량을 혼동하지 말고 국물 속 당류·전분도 확인하세요."},
+{id:"buckwheat",name:"메밀면",group:"grain",serving:"제품·조리 상태별 교환표 확인",unit:1,carb:"탄수화물·일부 식이섬유",desc:"메밀 함량이 제품마다 다르고 밀가루가 섞인 제품도 있습니다.",why:"면류의 선택지를 넓힙니다.",tip:"메밀면도 탄수화물 식품이므로 제품 표시와 양을 확인하세요."},
+{id:"cracker",name:"무가당 크래커",group:"grain",serving:"제품 영양표 기준으로 환산",unit:1,carb:"전분·제품별 지방",desc:"크래커는 제품별 탄수화물과 지방 함량 차이가 큽니다.",why:"간식으로 활용할 때 양을 정하기 쉽습니다.",tip:"포장지의 1회 제공량과 총 탄수화물을 확인하세요."},
+{id:"corn",name:"옥수수",group:"grain",serving:"가식부 중량·교환표 확인",unit:1,carb:"전분·식이섬유",desc:"옥수수는 전분을 포함하므로 일반 채소와 다르게 곡류군으로 계산할 수 있습니다.",why:"밥 일부를 대체하는 식품으로 활용할 수 있습니다.",tip:"옥수수와 밥을 함께 먹으면 탄수화물 분량을 합산하세요."},
+{id:"porkloin",name:"돼지 안심·등심(기름 제거)",group:"lean",serving:"조리 전후 상태에 따라 약 40–50 g 예시",unit:1,carb:"단백질 중심",desc:"지방을 눈에 띄게 제거한 비교적 살코기 위주의 부위입니다.",why:"닭고기 외의 단백질 공급원입니다.",tip:"튀김옷과 조리유는 별도 고려하세요."},
+{id:"beeflean",name:"소고기 우둔·홍두깨살",group:"lean",serving:"살코기 약 40 g 예시",unit:1,carb:"단백질 중심",desc:"기름기가 적은 부위를 선택한 소고기입니다.",why:"철분과 단백질을 공급할 수 있습니다.",tip:"양념 불고기는 설탕·배즙 등 양념 성분도 확인하세요."},
+{id:"tuna",name:"참치(물 담금·물기 제거)",group:"lean",serving:"약 50 g 예시",unit:1,carb:"단백질 중심",desc:"물에 담긴 참치는 기름에 담긴 제품보다 지방이 적은 편입니다.",why:"간편한 단백질 식품입니다.",tip:"임신 중 참치는 종류와 섭취 빈도에 관한 최신 수은 안내를 확인하세요."},
+{id:"pollock",name:"동태·명태살",group:"lean",serving:"약 50 g 예시",unit:1,carb:"단백질 중심",desc:"지방이 적은 흰살생선 선택지입니다.",why:"생선 단백질을 다양하게 섭취할 수 있습니다.",tip:"완전히 익혀 드시고 전분 옷을 입힌 제품은 추가 탄수화물을 고려하세요."},
+{id:"squid",name:"오징어",group:"lean",serving:"약 50 g 예시",unit:1,carb:"단백질 중심",desc:"오징어는 단백질을 공급하며 조리 양념에 따라 당류가 추가될 수 있습니다.",why:"해산물 단백질 선택지를 넓힙니다.",tip:"매콤달콤한 볶음 양념의 설탕·물엿 양을 확인하세요."},
+{id:"leanpork",name:"돼지 뒷다리살(기름 제거)",group:"lean",serving:"살코기 약 40 g 예시",unit:1,carb:"단백질 중심",desc:"눈에 보이는 지방을 제거한 살코기 위주의 부위입니다.",why:"식단의 단백질 공급원을 다양화합니다.",tip:"부위와 손질 상태에 따라 지방량이 달라집니다."},
+{id:"mackerel",name:"고등어",group:"medium",serving:"약 40 g 예시",unit:1,carb:"단백질·지방",desc:"지방을 포함한 생선으로 중지방 어육류군 예시입니다.",why:"생선의 지방과 단백질을 함께 섭취할 수 있습니다.",tip:"충분히 익히고, 생선 종류별 임신 중 섭취 안내를 확인하세요."},
+{id:"porkbelly",name:"돼지 목살(지방 포함)",group:"medium",serving:"약 40 g 예시; 부위별 교환표 확인",unit:1,carb:"단백질·지방",desc:"부위와 손질 정도에 따라 지방 함량이 크게 달라집니다.",why:"기름진 육류를 먹는 날에는 전체 지방 섭취량을 함께 고려합니다.",tip:"삼겹살 등 지방이 더 많은 부위와 동일한 양으로 단순 환산하지 마세요."},
+{id:"beefrib",name:"소고기 갈비살·등심(지방 포함)",group:"medium",serving:"부위별 교환표 확인",unit:1,carb:"단백질·지방",desc:"마블링과 손질 정도에 따라 지방 함량 차이가 큽니다.",why:"육류 선택을 다양화하되 양과 빈도를 관리합니다.",tip:"정확한 단위는 부위별 지방량에 따라 달라질 수 있습니다."},
+{id:"sardine",name:"정어리·꽁치",group:"medium",serving:"약 40 g 예시",unit:1,carb:"단백질·지방",desc:"지방을 포함한 생선 선택지입니다.",why:"단백질과 지방을 함께 공급합니다.",tip:"종류별 임신 중 생선 섭취 권고와 충분한 가열을 따르세요."},
+{id:"cheese",name:"치즈",group:"medium",serving:"종류·지방 함량별 교환표 확인",unit:1,carb:"단백질·지방·칼슘",desc:"치즈는 종류에 따라 지방과 나트륨 함량이 다릅니다.",why:"유제품 단백질과 칼슘을 보충할 수 있습니다.",tip:"우유군과 어육류군 중 어느 군으로 계산할지는 병원 교환표를 따르세요."},
+{id:"cabbage",name:"양배추",group:"veg",serving:"약 70 g 예시",unit:1,carb:"식이섬유·미량영양소",desc:"생식이나 익힌 반찬으로 활용하기 좋은 비전분성 채소입니다.",why:"채소 섭취량과 식단 다양성을 높입니다.",tip:"마요네즈·달콤한 드레싱은 별도로 계산하세요."},
+{id:"lettuce",name:"상추·깻잎",group:"veg",serving:"약 70 g 예시",unit:1,carb:"식이섬유·미량영양소",desc:"쌈과 생채소로 먹기 쉬운 잎채소입니다.",why:"식사에 채소를 추가하기 편리합니다.",tip:"쌈장에 들어가는 당류와 나트륨을 확인하세요."},
+{id:"zucchini",name:"애호박",group:"veg",serving:"약 70 g 예시",unit:1,carb:"식이섬유·미량영양소",desc:"국·찜·볶음에 활용할 수 있는 채소입니다.",why:"익힌 채소 반찬 선택지를 늘립니다.",tip:"볶을 때 사용하는 기름은 지방군에 반영하세요."},
+{id:"bean_sprout",name:"콩나물·숙주",group:"veg",serving:"약 70 g 예시",unit:1,carb:"식이섬유·일부 단백질",desc:"국이나 무침에 활용하기 좋은 채소류입니다.",why:"반찬 구성을 다양화합니다.",tip:"무침의 참기름과 양념은 별도로 계산하세요."},
+{id:"onion",name:"양파",group:"veg",serving:"반찬에 사용한 양을 기준으로 계산",unit:1,carb:"탄수화물·식이섬유",desc:"양파는 조리 시 단맛이 나며 사용량이 많으면 탄수화물도 고려해야 합니다.",why:"풍미를 더해 양념 사용을 줄이는 데 도움이 될 수 있습니다.",tip:"주재료로 많이 먹는 경우 병원 교환표의 분류를 확인하세요."},
+{id:"seaweed",name:"미역·김 등 해조류",group:"veg",serving:"종류·조리 상태별 교환표 확인",unit:1,carb:"식이섬유·미네랄",desc:"해조류는 종류와 조리 방식에 따라 영양성분이 다릅니다.",why:"채소 반찬의 다양성을 높일 수 있습니다.",tip:"국이나 무침의 설탕·참기름·나트륨을 확인하세요."},
+{id:"carrot",name:"당근",group:"veg",serving:"약 70 g 예시; 다량 섭취 시 교환표 확인",unit:1,carb:"식이섬유·탄수화물",desc:"당근은 채소지만 탄수화물 함량이 다른 잎채소보다 높을 수 있습니다.",why:"색채와 영양 다양성을 더합니다.",tip:"많은 양을 먹는 경우 해당 기관의 교환표 분류를 확인하세요."},
+{id:"oliveoil",name:"올리브유",group:"fat",serving:"약 5 g(1작은술) 예시",unit:1,carb:"지방",desc:"주로 불포화지방을 제공하는 조리용 기름입니다.",why:"조리용 지방의 선택지입니다.",tip:"팬에 남은 양을 제외하고 실제 사용량을 가능한 한 계량하세요."},
+{id:"sesameoil",name:"참기름",group:"fat",serving:"약 5 g(1작은술) 예시",unit:1,carb:"지방",desc:"풍미가 강해 소량으로도 맛을 낼 수 있는 기름입니다.",why:"나물·무침의 풍미를 더합니다.",tip:"나물에 넣은 양도 지방군에 포함하세요."},
+{id:"peanutbutter",name:"무가당 땅콩버터",group:"fat",serving:"제품별 지방 함량·교환표 확인",unit:1,carb:"지방·단백질",desc:"제품에 따라 당류와 지방 함량이 다릅니다.",why:"견과류 기반 지방 선택지입니다.",tip:"무가당 표시뿐 아니라 총 탄수화물과 1회 제공량을 확인하세요."},
+{id:"avocado",name:"아보카도",group:"fat",serving:"지방 교환표 기준량 확인",unit:1,carb:"불포화지방·식이섬유",desc:"불포화지방을 포함하는 식품입니다.",why:"식단에 다양한 지방 공급원을 포함할 수 있습니다.",tip:"지방군으로 계산할지와 양은 병원 교환표를 우선하세요."},
+{id:"skim_milk",name:"저지방 우유",group:"milk",serving:"약 200 mL 예시",unit:1,carb:"유당·단백질·칼슘",desc:"일반 우유보다 지방이 적은 제품입니다. 탄수화물은 여전히 포함됩니다.",why:"칼슘과 단백질 공급원으로 활용할 수 있습니다.",tip:"무가당 제품을 선택하고 탄수화물 표시를 확인하세요."},
+{id:"lactosefree",name:"락토프리 우유",group:"milk",serving:"제품 표시·교환표 확인",unit:1,carb:"탄수화물·단백질·칼슘",desc:"유당을 분해한 제품으로, 일반 우유와 탄수화물 양이 크게 다르지 않을 수 있습니다.",why:"유당 소화가 불편한 경우 대안이 될 수 있습니다.",tip:"락토프리라고 탄수화물이 없는 것은 아니므로 영양표를 확인하세요."},
+{id:"plain_greek",name:"무가당 그릭요거트",group:"milk",serving:"제품별 탄수화물·단백질 표시 확인",unit:1,carb:"단백질·유당",desc:"농축 정도에 따라 단백질과 탄수화물 함량이 달라집니다.",why:"간식이나 식사에 단백질을 보충할 수 있습니다.",tip:"일반 요거트와 같은 양으로 자동 환산하지 말고 제품 영양표를 확인하세요."},
+{id:"pear",name:"배",group:"fruit",serving:"약 100 g 예시; 교환표 확인",unit:1,carb:"과일 탄수화물·식이섬유",desc:"배는 과일군으로 계산하며 크기에 따라 한 개의 무게가 크게 달라집니다.",why:"과일 선택지를 다양화합니다.",tip:"개수보다 가식부 무게로 계량하고 한 번에 몰아 먹지 마세요."},
+{id:"orange",name:"오렌지",group:"fruit",serving:"가식부 약 100 g 예시",unit:1,carb:"과일 탄수화물·식이섬유",desc:"통과일 형태로 먹으면 주스보다 분량을 관리하기 쉽습니다.",why:"과일을 정해진 양으로 나누어 먹을 수 있습니다.",tip:"주스로 갈면 섭취량이 늘기 쉬우므로 통과일을 우선하세요."},
+{id:"kiwi",name:"키위",group:"fruit",serving:"약 100 g 예시; 교환표 확인",unit:1,carb:"과일 탄수화물·식이섬유",desc:"키위는 과일군으로 계산합니다.",why:"과일 종류를 다양화합니다.",tip:"크기 차이가 있으므로 실제 중량과 병원 교환표를 확인하세요."},
+{id:"blueberry",name:"블루베리",group:"fruit",serving:"제품·교환표 기준량 확인",unit:1,carb:"과일 탄수화물·식이섬유",desc:"생과와 건조 과일은 수분과 당류 농도가 다릅니다.",why:"과일 선택지를 다양화할 수 있습니다.",tip:"건블루베리·가당 냉동 제품은 당류가 농축되거나 추가될 수 있습니다."},
+{id:"grape",name:"포도",group:"fruit",serving:"가식부 중량으로 계량",unit:1,carb:"과일 탄수화물",desc:"알 크기와 품종에 따라 개수당 중량 차이가 큽니다.",why:"정해진 과일 분량 안에서 선택할 수 있습니다.",tip:"송이째 먹으면 양이 늘기 쉬우므로 먼저 먹을 양을 덜어 계량하세요."},
+{id:"peach",name:"복숭아",group:"fruit",serving:"가식부 중량·교환표 확인",unit:1,carb:"과일 탄수화물·식이섬유",desc:"품종과 크기에 따라 당류와 가식부 중량이 달라집니다.",why:"계절 과일 선택지입니다.",tip:"통조림은 시럽 첨가 여부를 확인하고 가능하면 생과를 선택하세요."},
+{id:"banana",name:"바나나",group:"fruit",serving:"가식부 중량으로 계량",unit:1,carb:"과일 탄수화물",desc:"바나나는 크기와 숙성도에 따라 탄수화물 섭취량이 달라질 수 있습니다.",why:"간편한 과일이지만 분량을 정해 먹는 것이 중요합니다.",tip:"한 개 전체를 자동으로 1단위로 보지 말고 병원 교환표에 맞춰 계량하세요."},
+];
+
+// 사진 기준 데이터: 사용자가 제공한 식품교환표 사진을 읽어 반영했습니다.
+const exchangeStandards = {
+ grain:{label:'곡류군',kcal:100,carb:23,protein:2,fat:null,source:'사진에 표시됨'},
+ lean:{label:'어육류군(저지방)',kcal:50,carb:null,protein:8,fat:2,source:'사진에 표시됨'},
+ medium:{label:'어육류군(중지방)',kcal:75,carb:null,protein:8,fat:5,source:'사진에 표시됨'},
+ highfat:{label:'어육류군(고지방)',kcal:100,carb:null,protein:8,fat:8,source:'사진에 표시됨'},
+ veg:{label:'채소군',kcal:20,carb:3,protein:2,fat:null,source:'사진에 표시됨'}
+};
+const photoExchangeItems = [{"id":"rice","name":"밥(백미)","group":"grain","measureValue":70,"measureUnit":"g","state":"조리 후","serving":"밥 70 g (약 1/3공기)","carb":"탄수화물 중심","desc":"사진에 제시된 곡류군 1교환단위 예시입니다.","why":"식품교환표 분량에 맞춰 한 끼 탄수화물 양을 계획할 수 있습니다.","tip":"조리 후 밥 무게로 계량하세요."},{"id":"brownrice","name":"현미밥","group":"grain","measureValue":70,"measureUnit":"g","state":"조리 후","serving":"현미밥 70 g (약 1/3공기)","carb":"탄수화물·식이섬유","desc":"사진 자료의 잡곡밥 70 g 기준을 현미밥 참고량으로 적용했습니다. 실제 혼합비에 따라 달라질 수 있습니다.","why":"통곡물 선택지를 늘릴 수 있습니다.","tip":"조리 후 무게이며, 백미와 섞은 경우 밥 전체 무게로 계량하세요."},{"id":"barleyrice","name":"보리밥","group":"grain","measureValue":70,"measureUnit":"g","state":"조리 후","serving":"보리밥 70 g (잡곡밥 사진 기준 참고)","carb":"탄수화물·식이섬유","desc":"사진에 적힌 잡곡밥 70 g을 참고 기준으로 적용했습니다. 보리 배합비에 따라 영양성분은 달라집니다.","why":"밥 종류를 다양하게 선택할 수 있습니다.","tip":"조리 후 무게로 계량하세요."},{"id":"multigrainrice","name":"콩·잡곡밥","group":"grain","measureValue":70,"measureUnit":"g","state":"조리 후","serving":"잡곡밥 70 g (약 1/3공기)","carb":"탄수화물·식이섬유","desc":"사진 자료에 나온 잡곡밥의 기준량입니다.","why":"밥 선택지를 다양화할 수 있습니다.","tip":"조리 후 무게로 계량하고, 콩의 비율에 따라 영양성분 차이가 날 수 있습니다."},{"id":"bread","name":"식빵","group":"grain","measureValue":35,"measureUnit":"g","state":"제품 상태","serving":"식빵 35 g (약 1장)","carb":"탄수화물 중심","desc":"사진의 곡류군 1교환단위 식품 예시입니다.","why":"빵으로 식사를 구성할 때 분량을 맞추는 데 유용합니다.","tip":"제품마다 한 장 무게가 다르므로 가능하면 저울로 계량하세요."},{"id":"potato","name":"감자","group":"grain","measureValue":140,"measureUnit":"g","state":"사진의 조리 상태와 실제 제품 확인","serving":"감자 140 g (중간 크기 약 1개)","carb":"전분성 탄수화물","desc":"사진의 곡류군 1교환단위 예시입니다.","why":"밥 일부를 대신하는 탄수화물 선택지입니다.","tip":"밥과 함께 먹으면 감자의 양도 곡류군으로 합산하세요."},{"id":"sweetpotato","name":"고구마","group":"grain","measureValue":70,"measureUnit":"g","state":"가식부","serving":"고구마 70 g (중간 크기 약 1/2개)","carb":"전분·당류","desc":"사진의 곡류군 1교환단위 예시입니다.","why":"밥이나 빵 일부를 대체할 수 있습니다.","tip":"품종과 조리 수분 차이가 있으므로 사진 기준량을 출발점으로 계량하세요."},{"id":"noodles","name":"삶은 국수·소면","group":"grain","measureValue":90,"measureUnit":"g","state":"삶은 후","serving":"삶은 국수 90 g (약 1/2공기)","carb":"전분 중심","desc":"사진의 곡류군 1교환단위 기준은 삶은 국수 90 g입니다.","why":"면류 식사에서도 탄수화물 분량을 계획할 수 있습니다.","tip":"삶기 전 건면과 삶은 면의 무게를 혼동하지 마세요."},{"id":"cracker","name":"크래커","group":"grain","measureValue":20,"measureUnit":"g","state":"제품 상태","serving":"크래커 20 g (약 5개; 제품별 차이)","carb":"전분·제품별 지방","desc":"사진의 곡류군 1교환단위 예시입니다.","why":"간식의 탄수화물 분량을 정하기 쉽습니다.","tip":"개수는 제품별 차이가 있으므로 20 g을 기준으로 계량하고 영양표를 확인하세요."},{"id":"ricecake","name":"가래떡","group":"grain","measureValue":50,"measureUnit":"g","state":"썬 가래떡","serving":"가래떡 50 g (썬 것 약 11~12개로 사진에 표기)","carb":"전분 중심","desc":"사진의 곡류군 1교환단위 예시입니다.","why":"떡을 먹는 경우 밥과 별도로 탄수화물 분량을 계산할 수 있습니다.","tip":"떡의 두께와 크기가 다르므로 무게로 계량하세요."},{"id":"peas_photo","name":"완두콩","group":"grain","measureValue":70,"measureUnit":"g","state":"사진의 상태 확인","serving":"완두콩 70 g (약 1/2컵)","carb":"탄수화물·식물성 단백질","desc":"사진의 곡류군 표에 포함된 예시입니다.","why":"탄수화물 식품의 선택지를 넓힙니다.","tip":"콩류는 종류별로 영양성분이 다르므로 해당 사진의 식품명과 분량을 기준으로 사용하세요."},{"id":"misugaru","name":"미숫가루","group":"grain","measureValue":30,"measureUnit":"g","state":"분말","serving":"미숫가루 30 g (약 1/4컵)","carb":"탄수화물 중심","desc":"사진의 곡류군 1교환단위 예시입니다.","why":"분말 형태의 곡류 식품도 분량을 관리할 수 있습니다.","tip":"물에 타도 탄수화물 양은 줄지 않습니다. 우유나 설탕을 넣으면 추가분을 계산하세요."},{"id":"dry_noodles","name":"마른 국수","group":"grain","measureValue":30,"measureUnit":"g","state":"건면·삶기 전","serving":"마른 국수 30 g (삶기 전)","carb":"전분 중심","desc":"사진의 곡류군 1교환단위 예시입니다.","why":"건면을 삶기 전에 계량할 때 활용합니다.","tip":"삶은 국수 90 g 기준과 함께 중복 계산하지 마세요. 둘 중 한 기준만 사용하세요."},{"id":"injeolmi","name":"인절미","group":"grain","measureValue":50,"measureUnit":"g","state":"제품 상태","serving":"인절미 50 g (약 3개로 사진에 표기)","carb":"전분·당류","desc":"사진의 곡류군 1교환단위 예시입니다.","why":"떡 종류별로 분량을 확인할 수 있습니다.","tip":"크기와 콩고물·설탕 첨가에 따라 차이가 날 수 있어 무게를 기준으로 하세요."},{"id":"acorn_jelly","name":"도토리묵","group":"grain","measureValue":200,"measureUnit":"g","state":"제품 상태","serving":"도토리묵 200 g (약 1/2모로 사진에 표기)","carb":"사진 자료의 곡류군 분류","desc":"제공된 사진에서는 곡류군 예시로 표기되어 있습니다. 실제 처방에 적용할 때는 병원에서 사용하는 교환표의 분류를 우선하세요.","why":"사진 기준을 그대로 찾아볼 수 있게 등록했습니다.","tip":"양념장에 설탕·물엿이 있으면 별도로 고려하세요."},{"id":"chestnut","name":"밤","group":"grain","measureValue":60,"measureUnit":"g","state":"가식부","serving":"밤 60 g (큰 것 약 3개로 사진에 표기)","carb":"탄수화물 중심","desc":"사진의 곡류군 1교환단위 예시입니다.","why":"간식이나 반찬으로 먹는 밤의 양을 조절할 수 있습니다.","tip":"껍질을 제외한 가식부 무게로 계량하세요."},{"id":"corn_puff","name":"강냉이(옥수수)","group":"grain","measureValue":30,"measureUnit":"g","state":"제품 상태","serving":"강냉이 30 g (약 1.5컵으로 사진에 표기)","carb":"전분 중심","desc":"사진의 곡류군 1교환단위 예시입니다.","why":"부피가 큰 간식도 무게 기준으로 관리할 수 있습니다.","tip":"제품별 팽화 정도와 첨가당이 다를 수 있어 포장지 영양정보를 확인하세요."},{"id":"cornflakes","name":"콘플레이크","group":"grain","measureValue":30,"measureUnit":"g","state":"제품 상태","serving":"콘플레이크 30 g (약 3/4컵으로 사진에 표기)","carb":"전분·제품별 당류","desc":"사진의 곡류군 1교환단위 예시입니다.","why":"시리얼을 먹을 때 양을 계량할 수 있습니다.","tip":"가당 시리얼은 제품 영양표를 확인하고 우유는 별도로 계산하세요."},{"id":"beeflean","name":"소고기 살코기(우둔·홍두깨 등)","group":"lean","measureValue":40,"measureUnit":"g","state":"사진의 상태는 조리 전후 별도 확인","serving":"소고기 40 g (사진 기준)","carb":"단백질 중심","desc":"사진의 저지방 어육류군 예시와 맞춰 40 g으로 표시했습니다. 정확한 부위가 동일한지는 병원 표를 확인하세요.","why":"육류 단백질의 기준량을 확인할 수 있습니다.","tip":"생고기와 조리 후 무게는 달라지므로 동일한 계량 상태를 유지하세요."},{"id":"porkloin","name":"돼지고기(저지방 부위)","group":"lean","measureValue":40,"measureUnit":"g","state":"사진의 상태는 조리 전후 별도 확인","serving":"돼지고기 40 g (사진 기준 참고)","carb":"단백질 중심","desc":"사진의 저지방 어육류군 돼지고기 예시입니다. 사진의 세부 부위 글씨가 완전히 선명하지 않아 부위는 일반화했습니다.","why":"저지방 부위의 분량을 계획할 때 참고할 수 있습니다.","tip":"지방이 많은 부위는 같은 양으로 환산하지 말고 해당 식품군을 확인하세요."},{"id":"pollock","name":"동태·명태살","group":"lean","measureValue":50,"measureUnit":"g","state":"사진의 상태는 조리 전후 별도 확인","serving":"동태 50 g (작은 1토막으로 사진에 표기)","carb":"단백질 중심","desc":"사진의 저지방 어육류군 예시입니다.","why":"생선류 단백질 선택지입니다.","tip":"튀김옷과 양념을 사용하면 추가 영양소가 생길 수 있습니다."},{"id":"whitefish","name":"흰살생선(대구·명태 등)","group":"lean","measureValue":50,"measureUnit":"g","state":"사진의 상태는 조리 전후 별도 확인","serving":"흰살생선 50 g (동태 사진 기준 참고)","carb":"단백질 중심","desc":"사진에 나온 동태 50 g 기준을 흰살생선 참고량으로 표시했습니다. 생선 종류별 차이는 있을 수 있습니다.","why":"육류 외 단백질 선택지로 활용합니다.","tip":"임신 중 생선은 종류별 수은 안내와 충분한 가열을 고려하세요."},{"id":"shrimp","name":"새우(중하)","group":"lean","measureValue":50,"measureUnit":"g","state":"가식부·껍질 제외 여부 확인","serving":"새우 50 g (중하 약 3마리로 사진에 표기)","carb":"단백질 중심","desc":"사진의 저지방 어육류군 예시입니다.","why":"간편한 해산물 단백질 선택지입니다.","tip":"사진은 마리 수를 함께 표기하지만 크기 편차가 있으므로 무게를 우선하세요."},{"id":"flatfish","name":"가자미","group":"lean","measureValue":50,"measureUnit":"g","state":"사진의 상태는 조리 전후 별도 확인","serving":"가자미 50 g (작은 1토막으로 사진에 표기)","carb":"단백질 중심","desc":"사진의 저지방 어육류군 예시입니다.","why":"저지방 생선 선택지를 다양화합니다.","tip":"소스와 조리유는 별도로 계산하세요."},{"id":"dry_squid","name":"건오징어","group":"lean","measureValue":15,"measureUnit":"g","state":"건조 상태","serving":"건오징어 15 g","carb":"단백질 중심·제품별 나트륨","desc":"사진의 저지방 어육류군에 기재된 참고량입니다.","why":"건조 식품은 적은 무게에도 농축되므로 계량이 중요합니다.","tip":"나트륨이 높을 수 있고 씹는 간식으로 양이 늘 수 있어 정량만 덜어 드세요."},{"id":"squid","name":"물오징어","group":"lean","measureValue":50,"measureUnit":"g","state":"사진의 상태는 조리 전후 별도 확인","serving":"물오징어 50 g (몸통 약 1/3로 사진 표기)","carb":"단백질 중심","desc":"사진의 저지방 어육류군에 기재된 예시로 읽히는 항목입니다.","why":"저지방 해산물 선택지를 다양화합니다.","tip":"사진의 토막/몸통 표현은 크기 차이가 있으므로 무게로 계량하세요."},{"id":"oyster","name":"굴","group":"lean","measureValue":70,"measureUnit":"g","state":"가식부","serving":"굴 70 g (약 1/3컵으로 사진에 표기)","carb":"단백질·미량영양소","desc":"사진의 저지방 어육류군 예시입니다.","why":"해산물 단백질 선택지입니다.","tip":"임신 중에는 생굴을 피하고 충분히 익혀 드세요."},{"id":"pork_tenderloin_med","name":"돼지고기 안심(사진의 중지방군 예시)","group":"medium","measureValue":40,"measureUnit":"g","state":"사진의 상태는 조리 전후 별도 확인","serving":"돼지고기 안심 40 g (사진 표기)","carb":"단백질·지방","desc":"사진 자료의 중지방 어육류군에 기재된 항목을 그대로 기록했습니다. 일반적인 부위별 영양 차이가 있을 수 있으므로 병원 교환표 분류를 우선하세요.","why":"사진 기준 식품을 찾을 수 있도록 별도 등록했습니다.","tip":"저지방·중지방 분류는 사진 자료 또는 영양사 처방을 우선하세요."},{"id":"beef_sirloin","name":"소고기 등심","group":"medium","measureValue":40,"measureUnit":"g","state":"사진의 상태는 조리 전후 별도 확인","serving":"소고기 등심 40 g (사진 표기)","carb":"단백질·지방","desc":"사진의 중지방 어육류군 예시입니다.","why":"육류 선택의 다양성을 제공합니다.","tip":"부위와 마블링에 따라 지방량이 달라질 수 있습니다."},{"id":"ham_roast","name":"햄(로스햄)","group":"medium","measureValue":40,"measureUnit":"g","state":"제품 상태","serving":"로스햄 40 g (약 2장으로 사진에 표기)","carb":"단백질·지방·나트륨","desc":"사진의 중지방 어육류군 예시입니다.","why":"가공육도 기준량을 확인할 수 있습니다.","tip":"나트륨 함량을 확인하고 가공육 섭취 빈도를 조절하세요."},{"id":"mackerel","name":"고등어","group":"medium","measureValue":50,"measureUnit":"g","state":"사진의 상태는 조리 전후 별도 확인","serving":"고등어 50 g (작은 1토막으로 사진 표기)","carb":"단백질·지방","desc":"사진의 중지방 어육류군 예시입니다.","why":"지방을 포함한 생선류 선택지입니다.","tip":"조리 후 무게와 조리 전 무게를 혼동하지 마세요."},{"id":"sardine","name":"꽁치","group":"medium","measureValue":50,"measureUnit":"g","state":"사진의 상태는 조리 전후 별도 확인","serving":"꽁치 50 g (작은 1토막으로 사진 표기)","carb":"단백질·지방","desc":"사진의 중지방 어육류군 예시입니다.","why":"생선 선택지를 다양하게 구성할 수 있습니다.","tip":"조리 방식과 사용한 기름을 고려하세요."},{"id":"cutlassfish","name":"갈치","group":"medium","measureValue":50,"measureUnit":"g","state":"사진의 상태는 조리 전후 별도 확인","serving":"갈치 50 g (작은 1토막으로 사진 표기)","carb":"단백질·지방","desc":"사진의 중지방 어육류군 예시입니다.","why":"생선 메뉴를 다양하게 구성할 수 있습니다.","tip":"토막 크기가 일정하지 않아 무게로 계량하세요."},{"id":"fried_fishcake","name":"튀긴 어묵","group":"medium","measureValue":50,"measureUnit":"g","state":"제품 상태","serving":"튀긴 어묵 50 g (사진 표기)","carb":"단백질·지방·제품별 탄수화물","desc":"사진의 중지방 어육류군 예시입니다.","why":"가공 수산물의 양을 확인할 수 있습니다.","tip":"제품별 전분과 나트륨 함량 차이가 크므로 영양표를 확인하세요."},{"id":"blackbeans","name":"검정콩","group":"medium","measureValue":20,"measureUnit":"g","state":"건조/불린 상태 확인 필요","serving":"검정콩 20 g (약 2큰술로 사진 표기)","carb":"식물성 단백질·탄수화물·지방","desc":"사진의 중지방 어육류군 예시입니다. 불리거나 삶은 상태는 무게가 달라집니다.","why":"식물성 단백질 선택지입니다.","tip":"사진의 상태와 실제 계량 상태가 다른 경우 같은 기준량으로 보지 마세요."},{"id":"tofu","name":"두부","group":"medium","measureValue":80,"measureUnit":"g","state":"제품 상태","serving":"두부 80 g (사진에는 1/5모로 표기)","carb":"식물성 단백질·지방","desc":"사진의 중지방 어육류군 예시입니다.","why":"동물성 단백질 외에 식물성 단백질을 선택할 수 있습니다.","tip":"모 크기와 제품별 수분이 달라 중량으로 계량하세요."},{"id":"natto","name":"낫토","group":"medium","measureValue":40,"measureUnit":"g","state":"제품 상태","serving":"낫토 40 g","carb":"식물성 단백질·지방","desc":"사진의 중지방 어육류군 예시입니다.","why":"발효 콩 식품을 선택지에 포함할 수 있습니다.","tip":"첨부 소스의 당류·나트륨을 확인하세요."},{"id":"chicken_drumstick","name":"닭고기(닭다리)","group":"highfat","measureValue":40,"measureUnit":"g","state":"가식부·뼈 제외 여부 확인","serving":"닭다리 40 g (사진 표기)","carb":"단백질·지방","desc":"사진의 고지방 어육류군 예시입니다.","why":"사진 기준의 고지방군 선택지입니다.","tip":"뼈 포함 무게와 가식부 무게를 구분하세요."},{"id":"porkbelly","name":"삼겹살","group":"highfat","measureValue":40,"measureUnit":"g","state":"사진의 상태는 조리 전후 별도 확인","serving":"삼겹살 40 g (사진 표기)","carb":"단백질·지방","desc":"사진의 고지방 어육류군 예시입니다.","why":"지방 함량이 높은 육류는 목표량을 정해 관리하는 데 도움이 됩니다.","tip":"굽는 동안 빠진 지방과 조리 후 무게 차이를 고려하세요."},{"id":"marinated_ribs","name":"양념갈비","group":"highfat","measureValue":40,"measureUnit":"g","state":"제품 상태","serving":"양념갈비 40 g (사진 표기)","carb":"단백질·지방·양념당류","desc":"사진의 고지방 어육류군 예시입니다.","why":"고지방 육류의 사진 기준량을 확인할 수 있습니다.","tip":"양념 당류가 추가될 수 있으므로 제품 또는 조리법을 확인하세요."},{"id":"vienna","name":"비엔나소시지","group":"highfat","measureValue":40,"measureUnit":"g","state":"제품 상태","serving":"비엔나소시지 40 g (약 5개로 사진 표기)","carb":"단백질·지방·나트륨","desc":"사진의 고지방 어육류군 예시입니다.","why":"가공육의 분량을 계량할 수 있습니다.","tip":"제품별 크기와 나트륨 함량 차이가 큽니다."},{"id":"bacon","name":"베이컨","group":"highfat","measureValue":40,"measureUnit":"g","state":"제품 상태","serving":"베이컨 40 g (사진에 약 1과 1/4장으로 표기)","carb":"지방·단백질·나트륨","desc":"사진의 고지방 어육류군 예시입니다.","why":"가공육 섭취량을 관리할 수 있습니다.","tip":"제품마다 장당 중량 차이가 커서 무게를 우선하세요."},{"id":"canned_tuna","name":"참치 통조림","group":"highfat","measureValue":50,"measureUnit":"g","state":"사진의 제품 상태 확인","serving":"참치 통조림 50 g (약 1/3캔으로 사진 표기)","carb":"단백질·제품에 따른 지방·나트륨","desc":"사진의 고지방 어육류군에 기재된 예시입니다. 기름/물 담금 제품에 따라 지방이 달라질 수 있습니다.","why":"통조림의 사진 기준량을 확인할 수 있습니다.","tip":"제품 종류에 따라 지방 함량이 다르므로 영양표를 확인하세요. 임신 중 참치 섭취는 종류별 수은 안내를 따르세요."},{"id":"cheese","name":"치즈","group":"highfat","measureValue":30,"measureUnit":"g","state":"제품 상태","serving":"치즈 30 g (약 1.5장으로 사진 표기)","carb":"단백질·지방·칼슘·나트륨","desc":"사진의 고지방 어육류군 예시입니다. 치즈 종류에 따라 영양성분이 다릅니다.","why":"제품 종류를 확인하면서 유제품/단백질 식품 선택지를 구성할 수 있습니다.","tip":"사진 자료의 분류를 사용하되, 개별 제품의 지방과 나트륨을 확인하세요."},{"id":"yubu","name":"유부","group":"highfat","measureValue":30,"measureUnit":"g","state":"제품 상태","serving":"유부 30 g (약 5장으로 사진 표기)","carb":"지방·식물성 단백질","desc":"사진의 고지방 어육류군 예시로 읽히는 항목입니다.","why":"사진 기준 식품을 목록에서 찾을 수 있습니다.","tip":"유부는 제조법에 따라 기름 흡수량이 다를 수 있습니다."},{"id":"spinach","name":"시금치","group":"veg","measureValue":70,"measureUnit":"g","state":"사진의 조리 상태 확인","serving":"시금치 70 g (사진 표기)","carb":"탄수화물·단백질·식이섬유","desc":"사진의 채소군 1교환단위 예시입니다.","why":"채소군의 기준량을 확인할 수 있습니다.","tip":"나물의 참기름은 지방군으로 별도 계산하세요."},{"id":"cucumber","name":"오이","group":"veg","measureValue":70,"measureUnit":"g","state":"가식부","serving":"오이 70 g (중간 크기 약 1/3개로 사진 표기)","carb":"수분·식이섬유","desc":"사진의 채소군 1교환단위 예시입니다.","why":"생채소 분량을 계획하기 쉽습니다.","tip":"드레싱·쌈장은 별도로 고려하세요."},{"id":"zucchini","name":"애호박","group":"veg","measureValue":70,"measureUnit":"g","state":"사진의 조리 상태 확인","serving":"애호박 70 g (사진 표기)","carb":"탄수화물·식이섬유","desc":"사진의 채소군 1교환단위 예시입니다.","why":"국·찜·볶음에 활용할 수 있습니다.","tip":"볶을 때 사용하는 기름은 지방군으로 계산하세요."},{"id":"carrot","name":"당근","group":"veg","measureValue":70,"measureUnit":"g","state":"가식부","serving":"당근 70 g (큰 것 약 1/3개로 사진 표기)","carb":"탄수화물·식이섬유","desc":"사진의 채소군 1교환단위 예시입니다. 사진 주석은 일부 채소의 탄수화물 함량에 유의하도록 안내합니다.","why":"분량을 계량해 다양한 채소를 선택할 수 있습니다.","tip":"채소군에서도 당질이 상대적으로 높은 식품은 한 번에 많은 양을 먹지 않도록 하세요."},{"id":"lotus_root","name":"연근","group":"veg","measureValue":40,"measureUnit":"g","state":"가식부","serving":"연근 40 g (사진 표기)","carb":"탄수화물·식이섬유","desc":"사진의 채소군 1교환단위 예시입니다.","why":"뿌리채소의 분량을 확인할 수 있습니다.","tip":"조림 양념의 당류와 나트륨도 확인하세요."},{"id":"bellflower_root","name":"도라지","group":"veg","measureValue":40,"measureUnit":"g","state":"가식부","serving":"도라지 40 g (사진 표기)","carb":"탄수화물·식이섬유","desc":"사진의 채소군 1교환단위 예시입니다.","why":"뿌리채소의 기준량을 확인할 수 있습니다.","tip":"무침 양념의 설탕·물엿을 고려하세요."},{"id":"sweet_pumpkin","name":"단호박","group":"veg","measureValue":40,"measureUnit":"g","state":"가식부","serving":"단호박 40 g (사진 표기)","carb":"탄수화물·식이섬유","desc":"사진의 채소군 표에 실린 기준량입니다. 사진 주석은 일부 채소의 당질에 유의하도록 설명합니다.","why":"단호박도 분량을 정해 식단에 포함할 수 있습니다.","tip":"단맛이 있어도 무제한 섭취하지 말고 사진의 양을 참고하세요."},{"id":"shiitake","name":"표고버섯","group":"veg","measureValue":50,"measureUnit":"g","state":"사진의 생/건조 상태 확인","serving":"표고버섯 50 g (큰 것 약 3개로 사진 표기)","carb":"식이섬유·미량영양소","desc":"사진의 채소군 버섯 예시입니다.","why":"버섯 반찬의 기준량을 확인할 수 있습니다.","tip":"건표고는 생표고와 수분·중량이 다르므로 같은 중량으로 보지 마세요."},{"id":"oyster_mushroom","name":"느타리버섯","group":"veg","measureValue":50,"measureUnit":"g","state":"사진의 생/조리 상태 확인","serving":"느타리버섯 50 g (사진 표기)","carb":"식이섬유·미량영양소","desc":"사진의 채소군 버섯 예시입니다.","why":"버섯 선택지를 다양화합니다.","tip":"볶음용 기름은 지방군으로 별도 계산하세요."},{"id":"carrot_juice","name":"당근주스","group":"veg","measureValue":50,"measureUnit":"g","state":"주스","serving":"당근주스 50 g (약 1/4컵으로 사진 표기)","carb":"탄수화물·제품별 당류","desc":"사진의 채소군 표에 제시된 예시입니다. 주스의 실제 탄수화물은 제조 방식에 따라 다를 수 있습니다.","why":"사진 기준을 찾아볼 수 있도록 별도 등록했습니다.","tip":"시판 제품은 영양정보를 확인하고, 통채소 대신 주스를 자주 선택하지 않도록 하세요."},{"id":"kimchi","name":"김치류","group":"veg","measureValue":50,"measureUnit":"g","state":"제품 상태","serving":"김치류 50 g (사진 상단 안내)","carb":"탄수화물·나트륨","desc":"사진 상단의 채소군 분류 안내에 제시된 양입니다.","why":"반찬 분량을 함께 계획할 수 있습니다.","tip":"나트륨 함량이 높을 수 있으므로 전체 나트륨 섭취도 고려하세요."}];
+photoExchangeItems.forEach(item=>{
+ item.sourcePhoto=true;
+ const existing=foods.find(f=>f.id===item.id);
+ if(existing){ Object.assign(existing,item); }
+ else { foods.push({...item,unit:1,desc:item.desc||'사용자 제공 사진의 식품교환표에서 확인한 식품입니다.',why:item.why||'교환단위 기준량을 확인할 수 있도록 추가했습니다.',tip:item.tip||'실제 제품과 조리 상태를 병원 식품교환표에 맞춰 확인하세요.'}); }
+});
+
+const mealDefs=[["아침","breakfast"],["오전 간식","snack1"],["점심","lunch"],["오후 간식","snack2"],["저녁","dinner"],["취침 전 간식","snack3"]];
+let plan={}; let selectedGroup="all"; let selectedFood=null;
+const byId=id=>foods.find(f=>f.id===id);
+const groupName=id=>(groups.find(g=>g.id===id)||{}).name||id;
+function formatMeasure(f,qty){if(!f||!f.measureValue)return '';const n=f.measureValue*qty;const v=(Math.round(n*10)/10).toLocaleString('ko-KR',{maximumFractionDigits:1});return `${v} ${f.measureUnit||'g'}${qty===1?'':' (기준량 × '+qty+'단위)'}`;}
+function renderExchangeGuide(){const el=document.getElementById('exchangeGuide');if(!el)return;const order=['grain','lean','medium','highfat','veg'];el.innerHTML=`<div style="overflow-x:auto"><table class="exchange-table"><thead><tr><th>식품군</th><th>열량</th><th>탄수화물</th><th>단백질</th><th>지방</th></tr></thead><tbody>${order.map(id=>{const x=exchangeStandards[id];return `<tr><td>${x.label}</td><td class="nowrap">${x.kcal} kcal</td><td>${x.carb==null?'사진에 없음':x.carb+' g'}</td><td>${x.protein==null?'사진에 없음':x.protein+' g'}</td><td>${x.fat==null?'사진에 없음':x.fat+' g'}</td></tr>`}).join('')}</tbody></table></div><p class="small">기준은 사진에 표시된 ‘식품군 1단위’ 영양값입니다. 식품별 중량은 목록에서 사진 기준 배지를 확인하세요. 표의 단위값은 개인별 처방이나 혈당 반응을 대신하지 않습니다.</p>`;}
+
+function initPlan(){mealDefs.forEach(([name,id])=>{if(!plan[id])plan[id]=[];});}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function renderMeals(){
+ const root=document.getElementById("meals");
+ root.innerHTML=mealDefs.map(([name,id])=>`<div class="meal"><div class="meal-head"><strong>${name}</strong><span class="small">${plan[id].length}개 항목</span></div><div class="meal-body">${plan[id].length?plan[id].map((item,i)=>{const f=byId(item.food);return `<div class="foodrow"><div><div class="foodname"><a href="#" data-detail="${f.id}" style="color:inherit;text-decoration:underline;text-decoration-color:#aab8ce">${esc(f.name)}</a></div><div class="foodmeta">${esc(groupName(f.group))} · ${esc(f.serving)}${f.measureValue?`<div class="quantity-line">선택량 환산: 약 ${formatMeasure(f,Number(item.qty)||0)}</div>`:""}</div></div><input class="qty" type="number" min="0" step="0.5" value="${item.qty}" aria-label="교환단위 수량" data-meal="${id}" data-index="${i}"><div class="unit">단위</div><button class="remove danger" data-remove="${id}:${i}" aria-label="삭제">삭제</button></div>`}).join(""):`<div class="empty">아직 등록된 음식이 없습니다.</div>`}<div class="addline no-print"><select id="add-${id}"><option value="">식품 선택…</option>${foods.map(f=>`<option value="${f.id}">${esc(f.name)} · ${esc(groupName(f.group))}</option>`).join("")}</select><button data-add="${id}" class="primary">식품 추가</button></div></div></div>`).join("");
+ root.querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>{const id=b.dataset.add;const sel=document.getElementById("add-"+id);if(!sel.value)return;plan[id].push({food:sel.value,qty:1});renderAll();});
+ root.querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{const [id,i]=b.dataset.remove.split(":");plan[id].splice(+i,1);renderAll();});
+ root.querySelectorAll("[data-meal]").forEach(inp=>inp.onchange=()=>{plan[inp.dataset.meal][+inp.dataset.index].qty=Math.max(0,Number(inp.value)||0);renderAll();});
+ root.querySelectorAll("[data-detail]").forEach(a=>a.onclick=e=>{e.preventDefault();showDetail(a.dataset.detail);});
+}
+function currentTotals(){const t={};groups.forEach(g=>t[g.id]=0);Object.values(plan).flat().forEach(it=>{const f=byId(it.food);if(f)t[f.group]+=Number(it.qty)||0;});return t;}
+function renderTargets(){
+ const totals=currentTotals();
+ document.getElementById("targets").innerHTML=groups.map(g=>`<tr><td>${g.name}</td><td><input type="number" min="0" step=".5" value="${g.target}" data-target="${g.id}"></td><td><strong>${totals[g.id].toFixed(1).replace(/\.0$/,"")}</strong></td></tr>`).join("");
+ document.querySelectorAll("[data-target]").forEach(inp=>inp.onchange=()=>{groups.find(g=>g.id===inp.dataset.target).target=Math.max(0,Number(inp.value)||0);renderSummary();});
+}
+function renderSummary(){
+ const totals=currentTotals();
+ document.getElementById("summary").innerHTML=groups.map(g=>{const n=totals[g.id],target=g.target,ratio=target?Math.min(100,n/target*100):0;let cls=n>target?"over":n<target?"under":"ok";let label=n>target?"목표 초과":n<target?"목표 미달":"목표 도달";return `<div class="metric"><div class="label">${g.name}</div><div class="value">${n.toFixed(1).replace(/\.0$/,"")} <span style="font-size:12px;font-weight:500;color:var(--muted)">/ ${target}</span></div><div class="progress"><span style="width:${ratio}%;background:${n>target?'#c34c4c':g.color}"></span></div><div class="status ${cls}">${label}</div></div>`}).join("");
+}
+function renderAll(){renderMeals();renderTargets();renderSummary();renderCatalog();renderExchangeGuide();}
+function renderTabs(){document.getElementById("tabs").innerHTML=`<button class="${selectedGroup==="all"?"active":""}" data-group="all">전체</button>`+groups.map(g=>`<button class="${selectedGroup===g.id?"active":""}" data-group="${g.id}">${g.name}</button>`).join("");document.querySelectorAll("[data-group]").forEach(b=>b.onclick=()=>{selectedGroup=b.dataset.group;renderTabs();renderCatalog();});}
+function renderCatalog(){
+ const q=(document.getElementById("search").value||"").trim().toLowerCase();
+ const list=foods.filter(f=>(selectedGroup==="all"||f.group===selectedGroup)&&(!q||(f.name+" "+groupName(f.group)+" "+f.desc).toLowerCase().includes(q)));
+ document.getElementById("catalog").innerHTML=list.map(f=>`<div class="foodcard"><div class="foodcard-head"><div><strong>${esc(f.name)}</strong><div class="small">${esc(groupName(f.group))} · 1단위 기준: ${esc(f.serving)} ${f.sourcePhoto?"<span class=\"source-badge\">사진 기준</span>":"<span class=\"approx-badge\">제품·교환표 확인</span>"}</div></div><button data-open="${f.id}">상세</button></div><p>${esc(f.why)}</p><span class="tag">${esc(f.carb)}</span><button class="no-print" data-quick="${f.id}" style="float:right;padding:5px 8px">식단에 추가</button></div>`).join("")||`<div class="empty">검색 결과가 없습니다.</div>`;
+ document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>showDetail(b.dataset.open));
+ document.querySelectorAll("[data-quick]").forEach(b=>b.onclick=()=>{const f=byId(b.dataset.quick);const chooser=document.getElementById("quickMeal");chooser.dataset.food=f.id;chooser.showModal();});
+}
+function showDetail(id){const f=byId(id);if(!f)return;selectedFood=id;const std=exchangeStandards[f.group];const amount=f.measureValue?`<p><strong>기준량 환산</strong><br>1단위: ${esc(f.serving)}${f.measureValue?`<br>수량 입력 시: 1단위당 ${f.measureValue} ${esc(f.measureUnit||'g')}`:''}</p>`:`<p><strong>기준량(참고)</strong><br>${esc(f.serving)}</p>`;const standard=std?`<p><strong>해당 식품군 1교환단위 영양 기준(사진)</strong><br>${std.kcal} kcal · 탄수화물 ${std.carb==null?'자료 미표기':std.carb+' g'} · 단백질 ${std.protein==null?'자료 미표기':std.protein+' g'} · 지방 ${std.fat==null?'자료 미표기':std.fat+' g'}</p>`:`<p><strong>식품군 영양 기준</strong><br>제공된 사진에는 이 식품군의 영양 기준이 보이지 않아 별도 수치를 표시하지 않았습니다.</p>`;document.getElementById("foodDetail").innerHTML=`<div class="foodcard-head"><strong>${esc(f.name)}</strong><span class="tag">${esc(groupName(f.group))}</span></div>${amount}${f.state?`<p><strong>계량 상태</strong><br>${esc(f.state)}</p>`:""}${standard}<p><strong>영양 관점</strong><br>${esc(f.carb||'제품 영양정보 확인')}</p><p><strong>재료 설명</strong><br>${esc(f.desc||'식품별 조리 상태와 제품 기준을 확인하세요.')}</p><p><strong>임당 식단에서 고려할 점</strong><br>${esc(f.why||'담당 의료진·영양사의 지침을 따르세요.')}</p><p><strong>조리·계량 팁</strong><br>${esc(f.tip||'제품 영양정보와 병원 식품교환표를 우선하세요.')}</p><p class="small">기준 출처: ${f.sourcePhoto?'사용자 제공 사진의 식품교환표':'플래너의 일반 참고 정보(사진 기준 아님)'}.</p><p class="small">※ 실제 교환량은 병원에서 받은 식품교환표와 제품 영양정보를 우선하세요. 임신성 당뇨 식단은 담당 의료진·임상영양사와 조정해야 합니다.</p>`;}
+function loadSample(){
+ plan={};initPlan();
+ const sample={
+ breakfast:[["rice",2],["egg",1],["spinach",1]],
+ snack1:[["milk",1]],
+ lunch:[["rice",2],["chicken",1],["broccoli",2],["oil",1]],
+ snack2:[["apple",1]],
+ dinner:[["rice",2],["whitefish",1],["tofu",1],["cucumber",2],["oil",1]],
+ snack3:[["milk",1],["strawberry",1]]
+ };
+ Object.entries(sample).forEach(([m,items])=>plan[m]=items.map(([food,qty])=>({food,qty})));
+ renderAll();
+}
+document.getElementById("search").addEventListener("input",renderCatalog);
+document.getElementById("sampleBtn").onclick=loadSample;
+document.getElementById("clearBtn").onclick=()=>{if(confirm("식단표를 모두 비울까요?")){plan={};initPlan();renderAll();}};
+document.getElementById("printBtn").onclick=()=>window.print();
+const STORAGE_KEY="gestational-diabetes-meal-planner-v1";
+function saveLocal(){
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({plan,targets:groups.map(g=>({id:g.id,target:g.target}))}));
+    const el=document.getElementById("saveStatus"); if(el) el.textContent="· 이 기기에 자동 저장됨";
+  } catch(e) {
+    const el=document.getElementById("saveStatus"); if(el) el.textContent="· 자동 저장을 사용할 수 없음";
+  }
+}
+function loadLocal(){
+  try {
+    const raw=localStorage.getItem(STORAGE_KEY); if(!raw) return;
+    const data=JSON.parse(raw);
+    if(data.plan && typeof data.plan==="object") plan=data.plan;
+    if(Array.isArray(data.targets)) data.targets.forEach(t=>{const g=groups.find(x=>x.id===t.id);if(g&&Number.isFinite(Number(t.target)))g.target=Number(t.target);});
+  } catch(e) {}
+}
+const originalRenderAll=renderAll;
+renderAll=function(){originalRenderAll();saveLocal();};
+loadLocal();initPlan();renderTabs();renderAll();
+const quickDialog=document.getElementById("quickMeal");
+quickDialog.addEventListener("close",()=>{});
+document.getElementById("quickMealConfirm").addEventListener("click",e=>{
+  e.preventDefault();
+  const food=quickDialog.dataset.food, meal=document.getElementById("quickMealSelect").value;
+  if(food && plan[meal]) { plan[meal].push({food,qty:1}); renderAll(); }
+  quickDialog.close();
+});
+document.querySelectorAll("[data-quick]").forEach(b=>b.addEventListener("click",()=>{
+  const f=byId(b.dataset.quick); document.getElementById("quickMealFood").textContent=f.name+"을(를) 추가할 식사를 선택하세요.";
+  document.getElementById("quickMealSelect").value="breakfast";
+}));
+</script>
+</body>
+</html>
